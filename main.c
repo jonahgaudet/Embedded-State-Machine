@@ -234,13 +234,17 @@ void EUSCIA0_IRQHandler(void)
   {
     while(!(EUSCI_A0->IFG & EUSCI_A_IFG_TXIFG));	// Check if the TX buffer is empty first
 		
-		if (EUSCI_A0->RXBUF == INPUT_0) {			// Resets if 0 is sent
-			resetBoard();
-		}
-		
-		//Modifies state IFF RXBUF is valid input
-		if (EUSCI_A0->RXBUF == INPUT_1 || EUSCI_A0->RXBUF == INPUT_2) {
-			handleStateChange(EUSCI_A0->RXBUF != INPUT_1);
+		switch (EUSCI_A0->RXBUF)
+		{
+			case INPUT_0:								//Both LEDs off
+				resetBoard();
+				break;
+			case INPUT_1:								//P1.0 on, P2.0 off
+				handleStateChange(false);
+				break;
+			case INPUT_2:								//P1.0 on, P2.0 off
+				handleStateChange(true);
+				break;
 		}
   }
 }
